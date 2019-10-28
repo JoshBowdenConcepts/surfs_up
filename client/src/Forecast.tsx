@@ -1,18 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react'
 import styled from 'styled-components'
-import Forecast from './Forecast';
+import moment from 'moment'
 
-var exampleData = require('./example_forecast_devereux.json')
-
-type LocationProps = {
-    name: string;
-    spotId: number;
+type ForecastProps = {
+    forecastData: ForecastData[]
 }
 
-interface ServerResponse {
-    data: ForecastData
-}
-  
 interface ForecastData {
     timestamp: number
     localTimestamp: number
@@ -71,52 +64,18 @@ interface ForecastData {
     }
 }
 
-const Location = ({
-    name,
-    spotId,
-    ...props
-}: LocationProps) => {
-    const [data, setData] = useState(exampleData);
-    const [check, setCheck] = useState('Using Example Data')
-
-    useEffect(() => {
-        fetch(`http://127.0.0.1:5000/?spotId=${spotId}`)
-            .then((response) => {
-                return response.json()
-            })
-            .then((response: ForecastData) => {
-                setData(response);
-                setCheck('Live Data')
-            })
-            .catch(() => {
-                setData(exampleData);
-            })
-    }, [spotId])
-
+const Forecast = ({
+    forecastData
+}: ForecastProps) => {
     return (
-        <LocationContainer>
-            <h2>{name}</h2>
-            <p className="data_status"><i>{check}</i></p>
-            <Forecast forecastData={data}/>
-        </LocationContainer>
-    );
+        <ForecastContainer>
+            {forecastData.map((x: any, i: number) => <p key={i}>{moment.unix(x.localTimestamp).format("MM/DD/YYYY, h:mm a")}: {x.swell.components.combined.height} ft waves</p>)}
+        </ForecastContainer>
+    )
 }
 
-const LocationContainer = styled.div`
-  padding: 10px;
-  box-sizing: border-box;
-  background: white;
-  border-radius: 4px;
+const ForecastContainer = styled.div`
   width: 100%;
-  max-width: 400px;
-  margin: 10px;
-
-  .data_status {
-    text-align: center;
-    font-size: 12px;
-    color: red;
-    padding: 7px 0px;
-  }
 `
 
-export default Location;
+export default Forecast
