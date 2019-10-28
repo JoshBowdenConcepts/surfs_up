@@ -1,7 +1,7 @@
 import React, {  useEffect, useState } from 'react'
 import styled from 'styled-components'
 import moment from 'moment'
-import {XYPlot, VerticalBarSeries, HorizontalGridLines, XAxis, YAxis } from 'react-vis';
+import {XYPlot, LineSeries, HorizontalGridLines, XAxis, YAxis } from 'react-vis';
 import '../node_modules/react-vis/dist/style.css';
 require('react-vis')
 
@@ -100,9 +100,11 @@ const Forecast = ({
             <ForecastChart id="forecast_chart">
                 {/* Using React Vis: https://uber.github.io/react-vis/ */}
                 {/* Todo: Get this to show data based on date not index*/}
-                <XYPlot height={300} width={360}>
-                    <VerticalBarSeries data={reactVisData} color="red" stroke="1" />
+                <XYPlot height={300} width={360} margin={{
+                    top: 10
+                }}>
                     <HorizontalGridLines />
+                    <LineSeries data={reactVisData} curve={'curveNatural'} />
                     <XAxis title="Time/Date" />
                     <YAxis title="Wave Height" />
                 </XYPlot>
