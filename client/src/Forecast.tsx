@@ -86,18 +86,20 @@ const Forecast = ({
         }))
     }, [forecastData])
 
-    const reactVisData: any[] = forecast.map((item) => {
+    const reactVisData: any[] = forecast.map((item, index) => {
         return {
-            x: item.date,
+            x: index,
             y: item.waves
         }
     });
+
+    // console.table(reactVisData)
 
     return (
         <ForecastContainer>
             <ForecastChart id="forecast_chart">
                 {/* Using React Vis: https://uber.github.io/react-vis/ */}
-                {/* Todo: Get this to show the data that is imported */}
+                {/* Todo: Get this to show data based on date not index*/}
                 <XYPlot height={300} width={360}>
                     <VerticalBarSeries data={reactVisData} color="red" stroke="1" />
                     <HorizontalGridLines />
