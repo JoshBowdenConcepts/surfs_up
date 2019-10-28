@@ -1,7 +1,10 @@
 import React, {  useEffect, useState } from 'react'
 import styled from 'styled-components'
 import moment from 'moment'
-import d3 from 'd3'
+import {XYPlot, VerticalBarSeries, HorizontalGridLines, XAxis, YAxis } from 'react-vis';
+import '../node_modules/react-vis/dist/style.css';
+require('react-vis')
+
 
 type ForecastProps = {
     forecastData: ForecastData[]
@@ -65,11 +68,6 @@ interface ForecastData {
     }
 }
 
-interface ParsedForecastData {
-    date: string
-    waves: number
-}
-
 const Forecast = ({
     forecastData
 }: ForecastProps) => {
@@ -86,16 +84,36 @@ const Forecast = ({
                 waves: x.swell.components.combined.height
             }
         }))
-    }, [])
+    }, [forecastData])
+
+    const reactVisData: any[] = forecast.map((item) => {
+        return {
+            x: item.date,
+            y: item.waves
+        }
+    });
 
     return (
         <ForecastContainer>
-            {forecast.map((x: any, i: number) => <p key={i}>{x.date}: {x.waves} ft waves</p>)}
+            <ForecastChart id="forecast_chart">
+                {/* Using React Vis: https://uber.github.io/react-vis/ */}
+                {/* Todo: Get this to show the data that is imported */}
+                <XYPlot height={300} width={360}>
+                    <VerticalBarSeries data={reactVisData} color="red" stroke="1" />
+                    <HorizontalGridLines />
+                    <XAxis title="Time/Date" />
+                    <YAxis title="Wave Height" />
+                </XYPlot>
+            </ForecastChart>
         </ForecastContainer>
     )
 }
 
 const ForecastContainer = styled.div`
+  width: 100%;
+`
+
+const ForecastChart = styled.div`
   width: 100%;
 `
 
