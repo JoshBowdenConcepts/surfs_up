@@ -1,6 +1,7 @@
-import React from 'react'
+import React, {  useEffect, useState } from 'react'
 import styled from 'styled-components'
 import moment from 'moment'
+import d3 from 'd3'
 
 type ForecastProps = {
     forecastData: ForecastData[]
@@ -64,12 +65,32 @@ interface ForecastData {
     }
 }
 
+interface ParsedForecastData {
+    date: string
+    waves: number
+}
+
 const Forecast = ({
     forecastData
 }: ForecastProps) => {
+    const [forecast, updateForecast] = useState([{
+        date: 'Some Date',
+        waves: 6
+    }]);
+
+    useEffect(() => {
+        // Update to a mapped object that has just the time and swell height
+        updateForecast(forecastData.map((x: ForecastData, i: number) => {
+            return {
+                date: moment.unix(x.localTimestamp).format("MM/DD/YYYY, h:mm a"),
+                waves: x.swell.components.combined.height
+            }
+        }))
+    }, [])
+
     return (
         <ForecastContainer>
-            {forecastData.map((x: any, i: number) => <p key={i}>{moment.unix(x.localTimestamp).format("MM/DD/YYYY, h:mm a")}: {x.swell.components.combined.height} ft waves</p>)}
+            {forecast.map((x: any, i: number) => <p key={i}>{x.date}: {x.waves} ft waves</p>)}
         </ForecastContainer>
     )
 }
@@ -78,4 +99,4 @@ const ForecastContainer = styled.div`
   width: 100%;
 `
 
-export default Forecast
+export default Forecast 
